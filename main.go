@@ -50,7 +50,12 @@ func main() {
 
 	c := giteeclient.NewClient(secretAgent.GetTokenGenerator(o.gitee.TokenPath))
 
-	p := newRobot(c)
+	bot, err := c.GetBot()
+	if err != nil {
+		logrus.WithError(err).Fatal("get robot name")
+	}
+
+	p := newRobot(c, bot.Login)
 
 	libplugin.Run(p, o.plugin)
 

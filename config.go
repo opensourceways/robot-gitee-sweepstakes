@@ -1,6 +1,10 @@
 package main
 
-import libconfig "github.com/opensourceways/community-robot-lib/config"
+import (
+	"fmt"
+
+	libconfig "github.com/opensourceways/community-robot-lib/config"
+)
 
 type configuration struct {
 	ConfigItems []botConfig `json:"config_items,omitempty"`
@@ -50,11 +54,17 @@ func (c *configuration) SetDefault() {
 
 type botConfig struct {
 	libconfig.PluginForRepo
+
+	Congratulation string `json:"congratulation" required:"true"`
 }
 
 func (c *botConfig) setDefault() {
 }
 
 func (c *botConfig) validate() error {
+	if c.Congratulation == "" {
+		return fmt.Errorf("congratulation must be set.")
+	}
+
 	return c.PluginForRepo.Validate()
 }

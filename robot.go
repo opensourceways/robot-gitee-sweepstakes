@@ -5,22 +5,25 @@ import (
 
 	sdk "gitee.com/openeuler/go-gitee/gitee"
 	libconfig "github.com/opensourceways/community-robot-lib/config"
+	"github.com/opensourceways/community-robot-lib/giteeclient"
 	libplugin "github.com/opensourceways/community-robot-lib/giteeplugin"
 	"github.com/sirupsen/logrus"
 )
 
-// TODO: set botName
-const botName = ""
+const botName = "sweepstakes"
 
 type iClient interface {
+	ListIssueComments(org, repo, number string) ([]sdk.Note, error)
+	CreateIssueComment(org, repo string, number string, comment string) error
 }
 
-func newRobot(cli iClient) *robot {
-	return &robot{cli: cli}
+func newRobot(cli iClient, botName string) *robot {
+	return &robot{cli, botName}
 }
 
 type robot struct {
-	cli iClient
+	cli     iClient
+	botName string
 }
 
 func (bot *robot) NewPluginConfig() libconfig.PluginConfig {
@@ -35,28 +38,22 @@ func (bot *robot) getConfig(cfg libconfig.PluginConfig) (*configuration, error) 
 }
 
 func (bot *robot) RegisterEventHandler(p libplugin.HandlerRegitster) {
-	p.RegisterIssueHandler(bot.handleIssueEvent)
-	p.RegisterPullRequestHandler(bot.handlePREvent)
 	p.RegisterNoteEventHandler(bot.handleNoteEvent)
-	p.RegisterPushEventHandler(bot.handlePushEvent)
 }
 
-func (bot *robot) handlePREvent(e *sdk.PullRequestEvent, cfg libconfig.PluginConfig, log *logrus.Entry) error {
-	// TODO: if it doesn't needd to hand PR event, delete this function.
-	return nil
-}
+func (bot *robot) handleNoteEvent(e *sdk.NoteEvent, pc libconfig.PluginConfig, log *logrus.Entry) error {
 
-func (bot *robot) handleIssueEvent(e *sdk.IssueEvent, cfg libconfig.PluginConfig, log *logrus.Entry) error {
-	// TODO: if it doesn't needd to hand Issue event, delete this function.
-	return nil
-}
+	config, err := bot.getConfig(pc)
+	if err != nil {
+		return err
+	}
 
-func (bot *robot) handlePushEvent(e *sdk.PushEvent, cfg libconfig.PluginConfig, log *logrus.Entry) error {
-	// TODO: if it doesn't needd to hand Push event, delete this function.
-	return nil
-}
+	ne := giteeclient.NewIssueNoteEvent(e)
 
-func (bot *robot) handleNoteEvent(e *sdk.NoteEvent, cfg libconfig.PluginConfig, log *logrus.Entry) error {
-	// TODO: if it doesn't needd to hand Note event, delete this function.
-	return nil
+	cfg := config.configFor(ne.GetOrgRep())
+	if cfg == nil {
+		return nil
+	}
+
+	return bot.handleSweepstakes(ne, cfg)
 }
