@@ -6,21 +6,21 @@ import (
 	"strings"
 	"time"
 
-	"github.com/opensourceways/community-robot-lib/giteeclient"
+	sdk "github.com/opensourceways/go-gitee/gitee"
 	"k8s.io/apimachinery/pkg/util/sets"
 )
 
-func (bot *robot) handleSweepstakes(ne giteeclient.IssueNoteEvent, cfg *botConfig) error {
+func (bot *robot) handleSweepstakes(ne *sdk.NoteEvent, cfg *botConfig) error {
 	if !ne.IsIssue() || !ne.IsCreatingCommentEvent() {
 		return nil
 	}
 
-	n := parseCmd(ne.GetComment())
+	n := parseCmd(ne.GetComment().GetBody())
 	if n <= 0 {
 		return nil
 	}
 
-	org, repo := ne.GetOrgRep()
+	org, repo := ne.GetOrgRepo()
 
 	comments, err := bot.cli.ListIssueComments(org, repo, ne.GetIssueNumber())
 	if err != nil {

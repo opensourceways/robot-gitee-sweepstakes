@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	libconfig "github.com/opensourceways/community-robot-lib/config"
+	"github.com/opensourceways/community-robot-lib/config"
 )
 
 type configuration struct {
@@ -16,12 +16,12 @@ func (c *configuration) configFor(org, repo string) *botConfig {
 	}
 
 	items := c.ConfigItems
-	v := make([]libconfig.IPluginForRepo, len(items))
+	v := make([]config.IRepoFilter, len(items))
 	for i := range items {
 		v[i] = &items[i]
 	}
 
-	if i := libconfig.FindConfig(org, repo, v); i >= 0 {
+	if i := config.Find(org, repo, v); i >= 0 {
 		return &items[i]
 	}
 	return nil
@@ -53,7 +53,7 @@ func (c *configuration) SetDefault() {
 }
 
 type botConfig struct {
-	libconfig.PluginForRepo
+	config.RepoFilter
 
 	Congratulation string `json:"congratulation" required:"true"`
 }
@@ -66,5 +66,5 @@ func (c *botConfig) validate() error {
 		return fmt.Errorf("congratulation must be set.")
 	}
 
-	return c.PluginForRepo.Validate()
+	return c.RepoFilter.Validate()
 }
