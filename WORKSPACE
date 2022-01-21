@@ -519,8 +519,8 @@ go_repository(
 go_repository(
     name = "com_github_opensourceways_community_robot_lib",
     importpath = "github.com/opensourceways/community-robot-lib",
-    sum = "h1:h1fvn5XFaFfZLhoPbCW3bNM9EXEs7VxnBJLTTRd8AqA=",
-    version = "v0.0.0-20211216024409-a86a5aab046c",
+    sum = "h1:+F518thKLJdB/ywb9N2aa3TwU8TmgZjBor0zS5QeHXc=",
+    version = "v0.0.0-20220118064921-28924d0a1246",
 )
 
 go_repository(
@@ -911,6 +911,6 @@ go_repository(
 go_repository(
     name = "com_github_opensourceways_go_gitee",
     importpath = "github.com/opensourceways/go-gitee",
-    sum = "h1:+nJw5qqqQZEREQAoWs2wy08RSCs/agAa3Lfn8AOw+PI=",
-    version = "v0.0.0-20211216061634-bea635ca1ab3",
+    sum = "h1:L9QeiOlWyPcQTdNynF9L3zL6Yeq/+4L43cyO3vPROQE=",
+    version = "v0.0.0-20220120022149-6d34985edf4f",
 )
